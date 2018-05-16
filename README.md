@@ -34,16 +34,16 @@ If you're integrating into a system that's using a single configuration---pretty
 ### Programmatically
 
 ```ruby
-  VantivLite.configure do
-    env          'sandbox'
-    merchant_id  'default'
-    password     'sandbox'
-    proxy_url    'http://user:passsword@proxy.internal:8888'
-    report_group 'Default Report Group'
-    username     'sandbox'
-    version      '8.22'
-    xml_lib      'REXML'
-  end
+VantivLite.configure do
+  env          'sandbox'
+  merchant_id  'default'
+  password     'sandbox'
+  proxy_url    'http://user:passsword@proxy.internal:8888'
+  report_group 'Default Report Group'
+  username     'sandbox'
+  version      '8.22'
+  xml_lib      'REXML'
+end
 ```
 
 Note: All values displayed above are the default values, with the exception of `proxy_url` which is `nil` by default. (There's a good chance you'll need to set `proxy_url` in `prelive` and `postlive` environments since they are IP-whitelisted.)
