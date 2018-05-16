@@ -8,13 +8,12 @@ WORLD_PAY_MINI_GEMSPEC = Gem::Specification.new do |s|
   s.authors       = %w[Joshua Hansen]
   s.email         = %w[joshua@epicbanality.com]
 
-  s.summary       = 'Simplified Vanitiv/WorldPay eComm (LitleOnline) API'
-  s.description   = 'LitleOnline transactions without dependencies.'
+  s.summary       = 'A Simplified Vanitiv/WorldPay (LitleOnline) API Library'
+  s.description   = s.summary
   s.homepage      = 'https://github.com/binarypaladin/vantiv_lite'
   s.license       = 'MIT'
 
-  s.files         = %w[CONTRIBUTING.md LICENSE.txt README.md Rakefile] +
-                    Dir['{spec,lib}/**/*.{rb,RB}']
+  s.files         = %w[LICENSE.txt README.md] + Dir['lib/**/*.rb']
   s.require_paths = %w[lib]
 
   s.add_development_dependency 'bundler',  '~> 1.16'
