@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<litleOnlineRequest xmlns="http://www.litle.com/schema" merchantId="default" version="11.1">
+  <authentication>
+    <user>sandbox</user>
+    <password>sandbox</password>
+  </authentication>
+  <authorization id="01" reportGroup="Default Report Group">
+    <orderId>1</orderId>
+    <amount>10000</amount>
+    <orderSource>ecommerce</orderSource>
+    <billToAddress>
+      <name>John Johnson</name>
+      <addressLine1>1 Main St</addressLine1>
+      <city>Las Vegas</city>
+      <state>NV</state>
+      <zip>89139</zip>
+      <country>US</country>
+    </billToAddress>
+    <card>
+      <type>VI</type>
+      <number>4457010000000009</number>
+      <expDate>0121</expDate>
+      <cardValidationNum>349</cardValidationNum>
+    </card>
+  </authorization>
+</litleOnlineRequest>
