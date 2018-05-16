@@ -5,15 +5,15 @@ require 'vantiv_lite/response'
 require 'vantiv_lite/xml'
 
 module VantivLite
-  TRANSACTIONS = %w[
-    auth_reversal
-    authorization
-    capture
-    credit
-    register_token
-    sale
-    void
-  ].freeze
+  TRANSACTIONS = {
+    auth_reversal: :auth_reversal,
+    authorization: :authorization,
+    capture: :capture,
+    credit: :credit,
+    register_token: :register_token_request,
+    sale: :sale,
+    void: :void
+  }.freeze
 
   class Request
     InvalidConfig = Class.new(StandardError)
@@ -37,8 +37,8 @@ module VantivLite
       http.start { |h| h.request(post_request(xml)) }
     end
 
-    TRANSACTIONS.each do |t|
-      define_method(t) { |hash| call({ :"#{t}_request" => hash }, :"#{t}_response") }
+    TRANSACTIONS.each do |name, request_name|
+      define_method(name) { |hash| call({ request_name => hash }, :"#{name}_response") }
     end
 
     private

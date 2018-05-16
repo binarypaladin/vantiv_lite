@@ -24,7 +24,7 @@ module VantivLite
     end
     alias call request
 
-    TRANSACTIONS.each { |t| define_method(t) { |hash| default_request.public_send(t, hash) } }
+    TRANSACTIONS.keys.each { |t| define_method(t) { |hash| default_request.public_send(t, hash) } }
   end
   configure
 end
