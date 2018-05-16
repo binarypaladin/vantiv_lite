@@ -57,7 +57,7 @@ module VantivLite
     end
 
     def with(**opts)
-      new(@opts.merge(opts))
+      self.class.new(@opts.merge(opts))
     end
 
     OPTS.each { |o| define_method(o) { @opts[o] } }
@@ -91,7 +91,7 @@ module VantivLite
     end
 
     def proxy_uri!
-      return unless (url = @opts['proxy_url'] || ENV['HTTP_PROXY'] || ENV['http_proxy'])
+      return unless (url = @opts[:proxy_url] || ENV['HTTP_PROXY'] || ENV['http_proxy'])
       @proxy_uri = URI(url)
     end
   end
