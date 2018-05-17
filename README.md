@@ -95,9 +95,9 @@ A basic request can be made using `VantivLite.request`. This uses the global con
 
 ```ruby
 params = {
-  register_token_request: {
-    order_id: '50',
-    account_number: '4457119922390123'
+  'registerTokenRequest' => {
+    'orderId' => '50',
+    'accountNumber' => '4457119922390123'
   }
 }
 
@@ -107,18 +107,18 @@ response = VantivLite.request(params) # => #<VantivLite::Response>
 This will return a `VantivLite::Response` which itself operates much like a hash:
 
 ```ruby
-response.dig(:register_token_response, :litle_token) # => "1111222233330123"
+response.dig('registerTokenResponse', 'litleToken') # => "1111222233330123"
 ```
 
 For many simple transactions the `*_request` and `*_response` keys get a little tedious. So, this can be abreviated to the following:
 
 ```ruby
 params = {
-  order_id: '50',
-  account_number: '4457119922390123'
+  'orderId' => '50',
+  'accountNumber' => '4457119922390123'
 }
 
-response = VantivLite.register_token(params).dig(:litle_token) # => "1111222233330123"
+response = VantivLite.register_token(params).dig('litleToken') # => "1111222233330123"
 ```
 
 There are shortcuts for the requests:
@@ -131,17 +131,15 @@ There are shortcuts for the requests:
   * `sale`
   * `void`
 
-Note that the only transformation that is done is underscoring and symbolizing keys. No other mapping is done.
-
 ### Requests With Multiple Configurations
 
 `VantiveLite.request` (and the various convenience versions) simply uses `Vantiv.default_request` which is just an instance of `VantivLite::Request`. The request object itself can be used similarly with the methods by invoking `#call`:
 
 ```ruby
 params = {
-  register_token_request: {
-    order_id: '50',
-    account_number: '4457119922390123'
+  'registerTokenRequest' => {
+    'orderId' => '50',
+    'accountNumber' => '4457119922390123'
   }
 }
 
@@ -150,8 +148,8 @@ response = VantivLite::Request.new(custom_config).(params) # => #<VantivLite::Re
 # Shortcut methods also work:
 
 params = {
-  order_id: '50',
-  account_number: '4457119922390123'
+  'orderId' => '50',
+  'accountNumber' => '4457119922390123'
 }
 
 response = VantivLite::Request.new(custom_config).register_token(params)
@@ -163,10 +161,10 @@ Obviously, XML doesn't map nice and neat to a hash and vice-versa. However, Vant
 
 ```ruby
 params = {
-  register_token_request: {
-    id: 'abcdef',
-    order_id: '50',
-    account_number: '4457119922390123'
+  'registerTokenRequest' => {
+    'id' => 'abcdef',
+    'orderId' => '50',
+    'accountNumber' => '4457119922390123'
   }
 }
 ```

@@ -5,7 +5,7 @@ require 'vantiv_lite/xml'
 module VantivLite
   class Response
     ServerError = Class.new(StandardError)
-    ROOT_KEY = :litle_online_response
+    ROOT_KEY = 'litleOnlineResponse'.freeze
 
     module Refinements
       [Array, Hash].each do |klass|
@@ -59,14 +59,9 @@ module VantivLite
     end
 
     def response_hash_with(response_hash, dig_keys)
-      response_hash = underscore_symbolize_keys(response_hash)
       raise ServerError, "missing root :#{ROOT_KEY}" unless (root_hash = response_hash[ROOT_KEY])
-      raise ServerError, root_hash[:message] unless root_hash[:response] == '0'
+      raise ServerError, root_hash['message'] unless root_hash['response'] == '0'
       dig_keys.any? ? root_hash.dig(*dig_keys) : root_hash
-    end
-
-    def underscore_symbolize_keys(hash)
-      XML.transform_keys(hash) { |k| k.gsub(/[A-Z]/) { |m| "_#{m.downcase}" }.to_sym }
     end
   end
 end

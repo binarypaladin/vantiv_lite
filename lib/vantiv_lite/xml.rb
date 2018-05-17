@@ -24,13 +24,6 @@ module VantivLite
       def serializer_with(name, attributes: Serializer::ATTRIBUTES)
         const_get(name)::Serializer.new(attributes: attributes)
       end
-
-      def transform_keys(hash, &blk)
-        return hash unless hash.is_a?(Hash)
-        hash.each_with_object({}) do |(k, obj), h|
-          h[yield(k)] = XML.hash_or_array(obj) { |o| transform_keys(o, &blk) }
-        end
-      end
     end
   end
 end

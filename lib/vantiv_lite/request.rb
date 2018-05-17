@@ -6,13 +6,13 @@ require 'vantiv_lite/xml'
 
 module VantivLite
   TRANSACTIONS = {
-    auth_reversal: :auth_reversal,
-    authorization: :authorization,
-    capture: :capture,
-    credit: :credit,
-    register_token: :register_token_request,
-    sale: :sale,
-    void: :void
+    auth_reversal: 'authReversal',
+    authorization: 'authorization',
+    capture: 'capture',
+    credit: 'credit',
+    register_token: 'registerTokenRequest',
+    sale: 'sale',
+    void: 'void'
   }.freeze
 
   class Request
@@ -37,8 +37,10 @@ module VantivLite
       http.start { |h| h.request(post_request(xml)) }
     end
 
-    TRANSACTIONS.each do |name, request_name|
-      define_method(name) { |hash| call({ request_name => hash }, :"#{name}_response") }
+    TRANSACTIONS.each do |name, request_key|
+      define_method(name) do |hash|
+        call({ request_key => hash }, "#{request_key.sub(/Request$/, '')}Response")
+      end
     end
 
     private
@@ -62,23 +64,13 @@ module VantivLite
           'version' => config.version,
           'merchantId' => config.merchant_id,
           'authentication' => { 'user' => config.username, 'password' => config.password }
-        }.merge(insert_default_attributes(lower_camelize_keys(request_hash)))
+        }.merge(insert_default_attributes(request_hash))
       }
     end
 
     def insert_default_attributes(request_hash)
       request_hash.each_with_object({}) do |(k, obj), h|
         h[k] = XML.hash_or_array(obj) { |o| default_attributes_with(o) }
-      end
-    end
-
-    def lower_camelize_keys(hash)
-      XML.transform_keys(hash) do |k|
-        if k.is_a?(String)
-          k
-        else
-          k.to_s.gsub(/_[a-z]/i) { |m| m[1].upcase }.tap { |s| s[0] = s[0].downcase }
-        end
       end
     end
 
