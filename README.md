@@ -19,9 +19,9 @@ Pretty standard gem stuff.
 
     $ gem install vantiv_lite
 
-When using [Bundler](https://bundler.io) or requiring this library in general, it's important to note that it will attempt to load it's XML add-ons by default If Nokogiri or Ox is already defined, it will use them in that order. Otherwise, it will use the default of REXML. The only consideration is that REXML will get required if neither optional library is already required.
+When using [Bundler](https://bundler.io) or requiring this library in general, it's important to note that this gem will attempt to load its XML add-ons by default if `Ox` or `Nokogiri` is already defined, it will use them in that order. Otherwise, it will use the default of `REXML`. The only consideration is that `REXML` will get required if neither optional library is already required.
 
-So, ensure your XML libs load first or just manually load it after the fact.
+So, ensure you load your project's XML libs (if you're using them) first.
 
 ## Configuration
 
