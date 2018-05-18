@@ -14,7 +14,7 @@ module VantivLite
 
     def env_config
       Config::OPTS.each_with_object({}) do |k, h|
-        env_key = "vaniv_#{k}"
+        env_key = "vantiv_#{k}"
         h[k] = ENV[env_key] if ENV.key?(env_key)
       end
     end
