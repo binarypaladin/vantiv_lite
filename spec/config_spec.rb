@@ -73,5 +73,10 @@ module VantivLite
         new_config.public_send(k).must_equal(config.public_send(k))
       end
     end
+
+    it 'creates a config object from ENV' do
+      ENV['vantiv_username'] ||= 'env_user'
+      VantivLite.env_config.username.must_equal(ENV['vantiv_username'])
+    end
   end
 end
