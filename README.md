@@ -195,11 +195,15 @@ Valid environments are:
 
 This configures the API url. At the moment, that's really all it does.
 
+## Reports
+
+Need access to reports? Turns out, there's a [separate gem for that](https://github.com/binarypaladin/vantiv_sftp_reports).
+
 ## Contributing
 
 ### Issue Guidelines
 
-GitHub issues are for bugs, not support. As of right now, there is no official support for this gem. You can try reaching out to the author, [Joshua Hansen](mailto:joshua@epicbanality.com?subject=VantiveLite) if you're really stuck, but there's a pretty high chance that won't go anywhere at the moment or you'll get a response like this:
+GitHub issues are for bugs, not support. As of right now, there is no official support for this gem. You can try reaching out to the author, [Joshua Hansen](mailto:joshua@epicbanality.com?subject=VantivLite) if you're really stuck, but there's a pretty high chance that won't go anywhere at the moment or you'll get a response like this:
 
 > Hi. I'm super busy. It's nothing personal. Check the README first if you haven't already. If you don 't find your answer there, it's time to start reading the source. Have fun! Let me know if I screwed something up.
 
