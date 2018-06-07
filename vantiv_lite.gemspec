@@ -1,6 +1,6 @@
 require File.expand_path('lib/vantiv_lite/version', __dir__)
 
-WORLD_PAY_MINI_GEMSPEC = Gem::Specification.new do |s|
+Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.2.0'
 
   s.name          = 'vantiv_lite'
