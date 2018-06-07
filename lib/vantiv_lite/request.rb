@@ -52,7 +52,7 @@ module VantivLite
     end
 
     def default_attributes_with(hash)
-      hash['id'] ||= SecureRandom.hex(12)
+      hash['id'] ||= '0'
       hash['reportGroup'] ||= config.report_group
       hash
     end
