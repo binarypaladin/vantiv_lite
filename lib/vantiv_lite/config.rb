@@ -32,8 +32,14 @@ module VantivLite
       end
     end
 
-    def self.build(&blk)
-      Config::Builder.(&blk)
+    class << self
+      def build(&blk)
+        Config::Builder.(&blk)
+      end
+
+      def with_obj(config)
+        config.is_a?(self) ? config : new(config)
+      end
     end
 
     attr_reader :proxy_uri, :sandbox, :uri
