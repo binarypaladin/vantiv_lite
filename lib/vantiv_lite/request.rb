@@ -34,7 +34,7 @@ module VantivLite
     end
 
     def post(xml)
-      http.start { |h| h.request(post_request(xml)) }
+      http.dup.start { |h| h.request(post_request(xml)) }
     end
 
     TRANSACTIONS.each do |name, request_key|
