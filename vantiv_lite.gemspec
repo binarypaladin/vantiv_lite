@@ -17,9 +17,9 @@ Gem::Specification.new do |s|
   s.require_paths = %w[lib]
 
   s.add_development_dependency 'bundler',  '~> 1.16'
-  s.add_development_dependency 'minitest', '~> 5.0'
-  s.add_development_dependency 'nokogiri', '~> 1.8'
-  s.add_development_dependency 'ox',       '~> 2.9'
-  s.add_development_dependency 'rake',     '~> 10.0'
+  s.add_development_dependency 'minitest', '~> 5'
+  s.add_development_dependency 'nokogiri', '~> 1'
+  s.add_development_dependency 'ox',       '~> 2'
+  s.add_development_dependency 'rake',     '~> 12.3'
   s.add_development_dependency 'rubocop',  '~> 0.56'
 end
