@@ -3,13 +3,15 @@
 module VantivLite
   module XML
     module Serializer
-      ATTRIBUTES = %w[id merchantId reportGroup version xmlns].freeze
+      ATTRIBUTES = %w[customerId id merchantId reportGroup version xmlns].freeze
 
       @@type_coercions = {}
       def self.coerce(type, obj = nil, &blk)
         raise TypeError, '`type` must be a `Class`' unless type.is_a?(Class)
+
         obj ||= blk
         raise TypeError, '`obj` must respond to `call`' unless obj.respond_to?(:call)
+
         @@type_coercions[type] = obj
       end
 
