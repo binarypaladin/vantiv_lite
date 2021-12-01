@@ -72,5 +72,11 @@ module VantivLite
       r = Request.new.register_token(register_token_params['registerTokenRequest'])
       r['orderId'].must_equal('1')
     end
+
+    it 'will respond correctly to veersion 12' do
+      config = VantivLite.default_config.with(version: '12.0')
+      r = Request.new(config).register_token(register_token_params['registerTokenRequest'])
+      
+    end
   end
 end
