@@ -4,6 +4,16 @@ require 'vantiv_lite/config'
 require 'vantiv_lite/request'
 
 module VantivLite
+  TRANSACTIONS = {
+    auth_reversal: 'authReversal',
+    authorization: 'authorization',
+    capture: 'capture',
+    credit: 'credit',
+    register_token: 'registerTokenRequest',
+    sale: 'sale',
+    void: 'void'
+  }.freeze
+
   class << self
     attr_reader :default_config, :default_request
 

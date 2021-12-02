@@ -6,13 +6,13 @@ require 'vantiv_lite/xml'
 require 'nokogiri'
 
 module VantivLite
-  TRANSACTIONS = {
-    credit: 'credit',
-    sale: 'sale',
-    void: 'void'
-  }.freeze
-
   class Request
+    TRANSACTIONS = {
+      credit: 'credit',
+      sale: 'sale',
+      void: 'void'
+    }.freeze
+
     InvalidConfig = Class.new(StandardError)
     ResponseError = Class.new(StandardError)
 
