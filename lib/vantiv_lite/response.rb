@@ -68,6 +68,7 @@ module VantivLite
     end
 
     def convert_txn_id(hash)
+      hash['txnId'] ||= hash['cnpTxnId']
       hash['txn_id'] ||= hash['cnpTxnId']
       hash
     end
