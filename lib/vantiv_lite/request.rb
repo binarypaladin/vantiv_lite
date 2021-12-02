@@ -7,7 +7,6 @@ require 'nokogiri'
 
 module VantivLite
   TRANSACTIONS = {
-    capture: 'capture',
     credit: 'credit',
     sale: 'sale',
     void: 'void'
@@ -56,6 +55,11 @@ module VantivLite
       Response.new(post(xml), 'authorizationResponse', parser: @parser)
     end
 
+    def capture(request_hash)
+      xml = format_xml(:capture_request, request_hash)
+      Response.new(post(xml), 'captureResponse', parser: @parser)
+    end
+
     def format_xml(method_name, request_hash)    # rubocop:disable Metrics/MethodLength
       builder = Nokogiri::XML::Builder.new do |xml|
         xml.cnpOnlineRequest(
@@ -77,7 +81,7 @@ module VantivLite
     private
 
     def authorization_request(hash, xml)
-      xml.authorization('id' => SecureRandom.uuid, 'reportGroup' => config.report_group) do
+      xml.authorization('id' => hash['authorizationRequestId'], 'reportGroup' => config.report_group) do
         xml.orderId hash['orderId']
         xml.amount hash['amount']
         xml.orderSource hash['orderSource']
@@ -87,8 +91,8 @@ module VantivLite
     end
 
     def auth_reversal_request(hash, xml)
-      xml.authReversal('id' => SecureRandom.uuid, 'reportGroup' => config.report_group) do
-        xml.cnpTxnId hash['txn_id']
+      xml.authReversal('id' => hash['id'], 'reportGroup' => config.report_group) do
+        xml.cnpTxnId hash['authorizationRequestId']
         xml.amount hash['amount']
       end
     end
@@ -103,6 +107,16 @@ module VantivLite
         xml.state address['state']
         xml.zip address['zip']
         xml.country address['country']
+      end
+    end
+
+    def capture_request(request_hash, xml)
+      xml.capture(
+        'id' => request_hash['fundsTransferId'] || SecureRandom.uuid,
+        'reportGroup' => config.report_group
+      ) do
+        xml.cnpTxnId request_hash['authorizationRequestId']
+        xml.orderId request_hash['orderId']
       end
     end
 
@@ -139,7 +153,7 @@ module VantivLite
     end
 
     def register_token_request(request_hash, xml)
-      xml.registerTokenRequest('id' => SecureRandom.uuid, 'reportGroup' => config.report_group) do
+      xml.registerTokenRequest('id' => request_hash['id'], 'reportGroup' => config.report_group) do
         xml.accountNumber request_hash['accountNumber']
         xml.cardValidationNum request_hash['cardValidationNum']
       end
