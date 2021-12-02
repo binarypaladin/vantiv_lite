@@ -37,14 +37,17 @@ module VantivLite
       }
     end
 
+    let(:v12_config) do
+      VantivLite.default_config.with(version: '12.20', username: 'FUNDA12', password: 'CERT!1212')
+    end
+
     it 'uses the default config by default' do
       Request.new.config.must_equal(VantivLite.default_config)
     end
 
     it 'can use a custom configuration' do
-      config = VantivLite.default_config.with(version: '11.1')
-      r = Request.new(config).(authorization_params)
-      r['version'].must_equal('11.1')
+      r = Request.new(v12_config).(authorization_params)
+      r['version'].must_equal('12.20')
     end
 
     it 'can make convenient transactions' do

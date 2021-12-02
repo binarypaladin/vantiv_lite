@@ -6,7 +6,7 @@ require 'vantiv_lite/xml'
 require 'nokogiri'
 
 module VantivLite
-  class Request
+  class Request # rubocop:disable Metrics/ClassLength
     TRANSACTIONS = {
       credit: 'credit',
       sale: 'sale',
