@@ -47,36 +47,15 @@ module VantivLite
       r['version'].must_equal('11.1')
     end
 
-    it 'can post raw XML and return an XML string' do
-      r = Request.new.post(FIXTURES_PATH.join('authorization_request.xml').read)
-      r.code.must_equal('200')
-      r.body.must_match(/litleOnlineResponse/)
-      r.body.must_match(/response='0'/)
-      r.body.must_match(/Valid Format/)
-    end
-
-    it 'converts a hash to XML and posts it' do
-      r = Request.new.(authorization_params)
-      r.must_be_instance_of(Response)
-      r['response'].must_equal('0')
-      r.dig('authorizationResponse', 'orderId').must_equal('01')
-
-      r = Request.new.(register_token_params)
-      r.dig('registerTokenResponse', 'orderId').must_equal('1')
-    end
-
     it 'can make convenient transactions' do
-      r = Request.new.authorization(authorization_params['authorization'])
-      r['orderId'].must_equal('01')
+      xml = Request.new.format_xml(:authorization_request, authorization_params['authorization'])
+      xml.include?('01').must_equal(true)
 
-      r = Request.new.register_token(register_token_params['registerTokenRequest'])
-      r['orderId'].must_equal('1')
-    end
-
-    it 'will respond correctly to veersion 12' do
-      config = VantivLite.default_config.with(version: '12.0')
-      r = Request.new(config).register_token(register_token_params['registerTokenRequest'])
-      
+      xml = Request.new.format_xml(
+        :register_token_request,
+        register_token_params['registerTokenRequest']
+      )
+      xml.include?('4457010000000009').must_equal(true)
     end
   end
 end

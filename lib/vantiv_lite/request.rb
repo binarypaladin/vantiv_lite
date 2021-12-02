@@ -3,6 +3,7 @@
 require 'securerandom'
 require 'vantiv_lite/response'
 require 'vantiv_lite/xml'
+require 'nokogiri'
 
 module VantivLite
   TRANSACTIONS = {
@@ -41,71 +42,77 @@ module VantivLite
     end
 
     def register_token(request_hash)
-      hash = request_hash(:register_token_request, request_hash)
-      Response.new(post(serializer.(hash)), 'registerTokenResponse', parser: @parser)
+      xml = format_xml(:register_token_request, request_hash)
+      Response.new(post(xml), 'registerTokenResponse', parser: @parser)
     end
 
     def auth_reversal(request_hash)
-      hash = request_hash(:auth_reversal_request, request_hash)
-      Response.new(post(serializer.(hash)), 'authReversalResponse', parser: @parser)
+      xml = format_xml(:auth_reversal_request, request_hash)
+      Response.new(post(xml), 'authReversalResponse', parser: @parser)
     end
 
     def authorization(request_hash)
-      hash = request_hash(:authorization_request, request_hash)
-      Response.new(post(serializer.(hash)), 'authorizationResponse', parser: @parser)
+      xml = format_xml(:authorization_request, request_hash)
+      Response.new(post(xml), 'authorizationResponse', parser: @parser)
+    end
+
+    def format_xml(method_name, request_hash)    # rubocop:disable Metrics/MethodLength
+      builder = Nokogiri::XML::Builder.new do |xml|
+        xml.cnpOnlineRequest(
+          'xmlns' => 'http://www.vantivcnp.com/schema',
+          'version' => config.version,
+          'merchantId' => config.merchant_id
+        ) do
+          xml.authentication do
+            xml.user config.username
+            xml.password config.password
+          end
+          send(method_name, request_hash, xml)
+        end
+      end
+
+      builder.to_xml
     end
 
     private
 
-    def authorization_request(hash) # rubocop:disable Metrics/MethodLength
-      {
-        authorizationRequest: {
-          id: SecureRandom.uuid,
-          reportGroup: config.report_group,
-          {
-            orderId: hash['orderId'],
-            amount: hash['amount'],
-            orderSource: hash['orderSource'],
-            billToAddress: bill_to_address(hash['billToAddress']),
-            card: card(hash['card'])
-          }
-        }
-      }
+    def authorization_request(hash, xml)
+      xml.authorization('id' => SecureRandom.uuid, 'reportGroup' => config.report_group) do
+        xml.orderId hash['orderId']
+        xml.amount hash['amount']
+        xml.orderSource hash['orderSource']
+        bill_to_address(hash['billToAddress'], xml)
+        card(hash['card'], xml)
+      end
     end
 
-    def auth_reversal_request(hash)
-      {
-        authReversalRequest: {
-          id: SecureRandom.uuid,
-          reportGroup: config.report_group,
-          {
-            cnpTxnId: hash['txn_id'],
-            amount: hash['amount']
-          }
-        }.compact
-      }
+    def auth_reversal_request(hash, xml)
+      xml.authReversal('id' => SecureRandom.uuid, 'reportGroup' => config.report_group) do
+        xml.cnpTxnId hash['txn_id']
+        xml.amount hash['amount']
+      end
     end
 
-    def bill_to_address(address)
-      return nil if address == nil
+    def bill_to_address(address, xml)
+      return nil if address.nil?
 
-      {
-        name: address['name'],
-        addressLine1: address['addressLine1'],
-        city: address['city'],
-        state: address['state'],
-        zip: address['zip'],
-        country: address['country']
-      }
+      xml.billToAddress do
+        xml.name address['name']
+        xml.addressLine1 address['addressLine1']
+        xml.city address['city']
+        xml.state address['state']
+        xml.zip address['zip']
+        xml.country address['country']
+      end
     end
 
-    def card(card_info)
-      {
-        type: card_info['type'],
-        number: card_info['number'],
-        expDate: card_info['expDate'],
-        cardValidationNum: card_info['cardValidationNum']
-      }
+    def card(card_info, xml)
+      xml.card do
+        xml.type card_info['type']
+        xml.number card_info['number']
+        xml.expDate card_info['expDate']
+        xml.cardValidationNum card_info['cardValidationNum']
+      end
     end
 
     def _http
@@ -120,32 +127,22 @@ module VantivLite
       hash
     end
 
-    def request_hash(method_name, request_hash)
+    def format_request(request_hash)
       {
         'cnpOnlineRequest' => {
           'xmlns' => 'http://www.vantivcnp.com/schema',
           'version' => config.version,
           'merchantId' => config.merchant_id,
           'authentication' => { 'user' => config.username, 'password' => config.password }
-        }.merge(self.send(method_name, request_hash))
+        }.merge(insert_default_attributes(request_hash))
       }
     end
 
-    def register_token_request(request_hash)
-      {
-        registerTokenRequest: {
-          id: SecureRandom.uuid,
-          reportGroup: config.report_group,
-          {
-            accountNumber: request_hash['accountNumber'],
-            cardValidationNum: request_hash['cardValidationNum']
-          }
-        }
-      }
-    end
-
-    def format_request(request_hash)
-      request_hash(:insert_default_attributes, request_hash)
+    def register_token_request(request_hash, xml)
+      xml.registerTokenRequest('id' => SecureRandom.uuid, 'reportGroup' => config.report_group) do
+        xml.accountNumber request_hash['accountNumber']
+        xml.cardValidationNum request_hash['cardValidationNum']
+      end
     end
 
     def insert_default_attributes(request_hash)

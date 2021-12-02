@@ -5,7 +5,7 @@ require 'vantiv_lite/xml'
 module VantivLite
   class Response
     ServerError = Class.new(StandardError)
-    ROOT_KEY = 'litleOnlineResponse'.freeze
+    ROOT_KEY = 'cnpOnlineResponse'.freeze
 
     module Refinements
       [Array, Hash].each do |klass|
