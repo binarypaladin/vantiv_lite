@@ -10,6 +10,7 @@ module VantivLite
     module Refinements
       [Array, Hash].each do |klass|
         next if klass.public_instance_methods.include?(:dig)
+
         refine klass do
           def dig(key, *next_keys)
             Dig.(self, key, *next_keys)
@@ -61,7 +62,14 @@ module VantivLite
     def response_hash_with(response_hash, dig_keys)
       raise ServerError, "missing root :#{ROOT_KEY}" unless (root_hash = response_hash[ROOT_KEY])
       raise ServerError, root_hash['message'] unless root_hash['response'] == '0'
-      dig_keys.any? ? root_hash.dig(*dig_keys) : root_hash
+
+      response_hash = dig_keys.any? ? root_hash.dig(*dig_keys) : root_hash
+      convert_txn_id(response_hash)
+    end
+
+    def convert_txn_id(hash)
+      hash['txn_id'] ||= hash['cnpTxnId']
+      hash
     end
   end
 end

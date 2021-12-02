@@ -20,6 +20,7 @@ module VantivLite
 
     def initialize(config = VantivLite.default_config, http: nil, serializer: nil)
       raise InvalidConfig, 'invalid or missing config' unless config.is_a?(Config)
+
       @config = config
       @http = http || _http
       @parser = XML.parser_with(config.xml_lib)
@@ -81,7 +82,7 @@ module VantivLite
     private
 
     def authorization_request(hash, xml)
-      xml.authorization('id' => hash['authorizationRequestId'], 'reportGroup' => config.report_group) do
+      xml.authorization('id' => id(hash), 'reportGroup' => config.report_group) do
         xml.orderId hash['orderId']
         xml.amount hash['amount']
         xml.orderSource hash['orderSource']
@@ -91,7 +92,7 @@ module VantivLite
     end
 
     def auth_reversal_request(hash, xml)
-      xml.authReversal('id' => hash['id'], 'reportGroup' => config.report_group) do
+      xml.authReversal('id' => id(hash), 'reportGroup' => config.report_group) do
         xml.cnpTxnId hash['authorizationRequestId']
         xml.amount hash['amount']
       end
@@ -153,10 +154,14 @@ module VantivLite
     end
 
     def register_token_request(request_hash, xml)
-      xml.registerTokenRequest('id' => request_hash['id'], 'reportGroup' => config.report_group) do
+      xml.registerTokenRequest('id' => id(request_hash), 'reportGroup' => config.report_group) do
         xml.accountNumber request_hash['accountNumber']
         xml.cardValidationNum request_hash['cardValidationNum']
       end
+    end
+
+    def id(hash)
+      hash['id'] || hash['authorizationRequestId'] || SecureRandom.uuid
     end
 
     def insert_default_attributes(request_hash)
