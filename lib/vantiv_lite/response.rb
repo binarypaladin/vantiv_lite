@@ -63,14 +63,7 @@ module VantivLite
       raise ServerError, "missing root :#{ROOT_KEY}" unless (root_hash = response_hash[ROOT_KEY])
       raise ServerError, root_hash['message'] unless root_hash['response'] == '0'
 
-      response_hash = dig_keys.any? ? root_hash.dig(*dig_keys) : root_hash
-      convert_txn_id(response_hash)
-    end
-
-    def convert_txn_id(hash)
-      hash['txnId'] ||= hash['cnpTxnId']
-      hash['txn_id'] ||= hash['cnpTxnId']
-      hash
+      dig_keys.any? ? root_hash.dig(*dig_keys) : root_hash
     end
   end
 end
