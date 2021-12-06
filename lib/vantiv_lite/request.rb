@@ -61,8 +61,7 @@ module VantivLite
       Response.new(post(xml), 'captureResponse', parser: @parser)
     end
 
-    def format_xml(method_name, request_hash)    # rubocop:disable Metrics/MethodLength
-      request_hash = request_hash.stringify_keys
+    def format_xml(method_name, request_hash) # rubocop:disable Metrics/MethodLength
       builder = Nokogiri::XML::Builder.new do |xml|
         xml.cnpOnlineRequest(
           'xmlns' => 'http://www.vantivcnp.com/schema',
@@ -87,6 +86,7 @@ module VantivLite
         xml.orderId hash['orderId']
         xml.amount hash['amount']
         xml.orderSource hash['orderSource']
+        cardholder_authentication(hash['cardholderAuthentication'], xml)
         bill_to_address(hash['billToAddress'], xml)
         card(hash['card'], xml)
       end
@@ -99,18 +99,23 @@ module VantivLite
       end
     end
 
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
     def bill_to_address(address, xml)
       return nil if address.nil?
 
       xml.billToAddress do
         xml.name address['name']
         xml.addressLine1 address['addressLine1']
+        xml.addressLine2 address['addressLine2']
         xml.city address['city']
         xml.state address['state']
         xml.zip address['zip']
         xml.country address['country']
       end
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
 
     def capture_request(request_hash, xml)
       xml.capture(
@@ -119,6 +124,19 @@ module VantivLite
       ) do
         xml.cnpTxnId request_hash['id']
         xml.orderId request_hash['orderId']
+      end
+    end
+
+    def cardholder_authentication(cardholder_info, xml)
+      return nil if cardholder_info.nil?
+
+      xml.cardholderAuthentication do
+        xml.authenticationValue cardholder_info['authenticationValue']
+        xml.authenticationTransactionId cardholder_info['authenticationTransactionId']
+        xml.customerIpAddress cardholder_info['customerIpAddress']
+        xml.authenticatedByMerchant cardholder_info['authenticatedByMerchant']
+        xml.authenticationProtocolVersion cardholder_info['authenticationProtocolVersion']
+        xml.tokenAuthenticationValue cardholder_info['tokenAuthenticationValue']
       end
     end
 
