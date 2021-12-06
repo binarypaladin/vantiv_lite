@@ -122,6 +122,8 @@ module VantivLite
     end
 
     def card(card_info, xml)
+      return nil if card_info.nil?
+
       xml.card do
         xml.type card_info['type']
         xml.number card_info['number']

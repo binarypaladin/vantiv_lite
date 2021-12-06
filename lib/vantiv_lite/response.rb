@@ -32,10 +32,11 @@ module VantivLite
 
     include Enumerable
 
-    attr_reader :to_h
+    attr_reader :to_h, :error
     alias to_hash to_h
 
     def initialize(http_response, *dig_keys, parser:)
+      @error = nil
       http_ok?(http_response)
       @to_h = response_hash_with(parser.(http_response.body), dig_keys)
     end
@@ -52,16 +53,30 @@ module VantivLite
       @to_h.each(*args, &blk)
     end
 
+    def success?
+      @error.nil?
+    end
+
+    def error_message
+      @error
+    end
+
     private
 
     def http_ok?(http_response)
-      raise ServerError, "server responded with #{http_response.code} instead of 200" unless
-        http_response.code == '200'
+      return true unless http_response != '200'
+
+      @error = "server responded with #{http_response.code} instead of 200"
+      raise ServerError, @error
     end
 
     def response_hash_with(response_hash, dig_keys)
       raise ServerError, "missing root :#{ROOT_KEY}" unless (root_hash = response_hash[ROOT_KEY])
-      raise ServerError, root_hash['message'] unless root_hash['response'] == '0'
+
+      if root_hash['response'] != '0'
+        @error = root_hash['message']
+        raise ServerError, @error
+      end
 
       dig_keys.any? ? root_hash.dig(*dig_keys) : root_hash
     end
