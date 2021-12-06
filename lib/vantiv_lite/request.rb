@@ -62,6 +62,7 @@ module VantivLite
     end
 
     def format_xml(method_name, request_hash)    # rubocop:disable Metrics/MethodLength
+      request_hash = request_hash.stringify_keys
       builder = Nokogiri::XML::Builder.new do |xml|
         xml.cnpOnlineRequest(
           'xmlns' => 'http://www.vantivcnp.com/schema',
