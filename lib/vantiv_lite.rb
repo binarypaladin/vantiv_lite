@@ -37,5 +37,6 @@ module VantivLite
 
     TRANSACTIONS.keys.each { |t| define_method(t) { |hash| default_request.public_send(t, hash) } }
   end
+
   configure
 end
