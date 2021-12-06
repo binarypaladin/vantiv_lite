@@ -116,7 +116,7 @@ module VantivLite
         'id' => request_hash['fundsTransferId'] || SecureRandom.uuid,
         'reportGroup' => config.report_group
       ) do
-        xml.cnpTxnId request_hash['authorizationRequestId']
+        xml.cnpTxnId request_hash['id']
         xml.orderId request_hash['orderId']
       end
     end
