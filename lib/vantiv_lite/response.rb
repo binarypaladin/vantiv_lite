@@ -64,7 +64,7 @@ module VantivLite
     private
 
     def http_ok?(http_response)
-      return true unless http_response != '200'
+      return true unless http_response.code != '200'
 
       @error = "server responded with #{http_response.code} instead of 200"
       raise ServerError, @error
