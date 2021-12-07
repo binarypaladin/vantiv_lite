@@ -9,7 +9,6 @@ module VantivLite
   class Request # rubocop:disable Metrics/ClassLength
     TRANSACTIONS = {
       credit: 'credit',
-      sale: 'sale',
       void: 'void'
     }.freeze
 
@@ -79,6 +78,11 @@ module VantivLite
       builder.to_xml
     end
 
+    def sale(request_hash)
+      xml = format_xml(:sale_request, request_hash)
+      Response.new(post(xml), 'saleResponse', parser: @parser)
+    end
+
     private
 
     def authorization_request(hash, xml)
@@ -99,8 +103,6 @@ module VantivLite
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
-    # rubocop:disable Metrics/AbcSize
     def bill_to_address(address, xml)
       return nil if address.nil?
 
@@ -114,8 +116,6 @@ module VantivLite
         xml.country address['country']
       end
     end
-    # rubocop:enable Metrics/MethodLength
-    # rubocop:enable Metrics/AbcSize
 
     def capture_request(request_hash, xml)
       xml.capture(
@@ -195,6 +195,15 @@ module VantivLite
       Net::HTTP::Post.new(config.uri.path).tap do |r|
         r['Content-Type'] ||= 'text/xml; charset=UTF-8'
         r.body = xml
+      end
+    end
+
+    def sale_request(request_hash, xml)
+      xml.sale('id' => id(request_hash), 'reportGroup' => config.report_group) do
+        xml.orderId request_hash['orderId']
+        xml.amount request_hash['amount']
+        xml.orderSource request_hash['orderSource']
+        card(request_hash['card'], xml)
       end
     end
   end
