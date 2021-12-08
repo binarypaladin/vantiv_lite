@@ -92,7 +92,7 @@ module VantivLite
         xml.orderSource hash['orderSource'] || 'ecommerce'
         cardholder_authentication(hash['cardholderAuthentication'], xml)
         token(hash['token'], xml)
-        bill_to_address(hash['billToAddress'], xml)
+        bill_to_address(hash['billToAddress'], xml) if hash['token'].nil?
         card(hash['card'], xml)
       end
     end
@@ -104,8 +104,11 @@ module VantivLite
       end
     end
 
-    def bill_to_address(address, xml)
-      return nil if address.nil?
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
+    def bill_to_address(hash, xml)
+      address = hash['billToAddress']
+      return nil if address.nil? || hash['token']
 
       xml.billToAddress do
         xml.name address['name']
@@ -117,13 +120,15 @@ module VantivLite
         xml.country address['country']
       end
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
 
     def capture_request(request_hash, xml)
       xml.capture(
-        'id' => request_hash['fundsTransferId'] || SecureRandom.uuid,
+        'id' => request_hash['id'] || SecureRandom.uuid,
         'reportGroup' => config.report_group
       ) do
-        xml.cnpTxnId request_hash['id']
+        xml.cnpTxnId request_hash['cnpTxnId']
         xml.orderId request_hash['orderId']
       end
     end
