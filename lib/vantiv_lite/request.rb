@@ -91,6 +91,7 @@ module VantivLite
         xml.amount hash['amount']
         xml.orderSource hash['orderSource'] || 'ecommerce'
         cardholder_authentication(hash['cardholderAuthentication'], xml)
+        token(hash['token'], xml)
         bill_to_address(hash['billToAddress'], xml)
         card(hash['card'], xml)
       end
@@ -204,6 +205,16 @@ module VantivLite
         xml.amount request_hash['amount']
         xml.orderSource request_hash['orderSource']
         card(request_hash['card'], xml)
+      end
+    end
+
+    def token(token_hash, xml)
+      return nil if token_hash.nil?
+
+      xml.token do
+        xml.cnpToken token_hash['cnpToken']
+        xml.expDate token_hash['expDate']
+        xml.cardValidationNum token_hash['cardValidationNum']
       end
     end
   end
