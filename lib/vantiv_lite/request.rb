@@ -89,7 +89,7 @@ module VantivLite
       xml.authorization('id' => id(hash), 'reportGroup' => config.report_group) do
         xml.orderId hash['orderId']
         xml.amount hash['amount']
-        xml.orderSource hash['orderSource']
+        xml.orderSource hash['orderSource'] || 'ecommerce'
         cardholder_authentication(hash['cardholderAuthentication'], xml)
         bill_to_address(hash['billToAddress'], xml)
         card(hash['card'], xml)
