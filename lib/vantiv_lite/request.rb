@@ -85,7 +85,7 @@ module VantivLite
 
     private
 
-    def authorization_request(hash, xml)
+    def authorization_request(hash, xml) # rubocop:disable Metrics/AbcSize
       xml.authorization('id' => id(hash), 'reportGroup' => config.report_group) do
         xml.orderId hash['orderId']
         xml.amount hash['amount']
