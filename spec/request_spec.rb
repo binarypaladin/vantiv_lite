@@ -37,28 +37,40 @@ module VantivLite
       }
     end
 
-    let(:v12_config) do
-      VantivLite.default_config.with(version: '12.20', username: 'FUNDA12', password: 'CERT!1212')
-    end
-
     it 'uses the default config by default' do
       Request.new.config.must_equal(VantivLite.default_config)
     end
 
     it 'can use a custom configuration' do
-      r = Request.new(v12_config).(authorization_params)
-      r['version'].must_equal('12.20')
+      config = VantivLite.default_config.with(version: '11.1')
+      r = Request.new(config).(authorization_params)
+      r['version'].must_equal('11.1')
+    end
+
+    it 'can post raw XML and return an XML string' do
+      r = Request.new.post(FIXTURES_PATH.join('authorization_request.xml').read)
+      r.code.must_equal('200')
+      r.body.must_match(/litleOnlineResponse/)
+      r.body.must_match(/response=\"0\"/)
+      r.body.must_match(/Valid Format/)
+    end
+
+    it 'converts a hash to XML and posts it' do
+      r = Request.new.(authorization_params)
+      r.must_be_instance_of(Response)
+      r['response'].must_equal('0')
+      r.dig('authorizationResponse', 'orderId').must_equal('01')
+
+      r = Request.new.(register_token_params)
+      r.dig('registerTokenResponse', 'orderId').must_equal('1')
     end
 
     it 'can make convenient transactions' do
-      xml = Request.new.format_xml(:authorization_request, authorization_params['authorization'])
-      xml.include?('01').must_equal(true)
+      r = Request.new.authorization(authorization_params['authorization'])
+      r['orderId'].must_equal('01')
 
-      xml = Request.new.format_xml(
-        :register_token_request,
-        register_token_params['registerTokenRequest']
-      )
-      xml.include?('4457010000000009').must_equal(true)
+      r = Request.new.register_token(register_token_params['registerTokenRequest'])
+      r['orderId'].must_equal('1')
     end
   end
 end

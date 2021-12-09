@@ -5,7 +5,6 @@ require 'vantiv_lite/xml'
 module VantivLite
   class Response
     ServerError = Class.new(StandardError)
-    ROOT_KEY = 'cnpOnlineResponse'
 
     module Refinements
       [Array, Hash].each do |klass|
@@ -32,11 +31,12 @@ module VantivLite
 
     include Enumerable
 
-    attr_reader :to_h, :error
+    attr_reader :to_h, :error, :root_key
     alias to_hash to_h
 
-    def initialize(http_response, *dig_keys, parser:)
+    def initialize(http_response, *dig_keys, request, parser:)
       @error = nil
+      @root_key = request.is_a?(Request) ? 'litleOnlineResponse' : 'cnpOnlineResponse'
       http_ok?(http_response)
       @to_h = response_hash_with(parser.(http_response.body), dig_keys)
     end
@@ -71,7 +71,7 @@ module VantivLite
     end
 
     def response_hash_with(response_hash, dig_keys)
-      raise ServerError, "missing root :#{ROOT_KEY}" unless (root_hash = response_hash[ROOT_KEY])
+      raise ServerError, "missing root :#{root_key}" unless (root_hash = response_hash[root_key])
 
       if root_hash['response'] != '0'
         @error = root_hash['message']

@@ -2,24 +2,19 @@
 
 require 'vantiv_lite/config'
 require 'vantiv_lite/request'
+require 'vantiv_lite/v12/request'
 
 module VantivLite
-  TRANSACTIONS = {
-    auth_reversal: 'authReversal',
-    authorization: 'authorization',
-    capture: 'capture',
-    credit: 'credit',
-    register_token: 'registerTokenRequest',
-    sale: 'sale',
-    void: 'void'
-  }.freeze
-
   class << self
     attr_reader :default_config, :default_request
 
     def configure(config = env_config, &blk)
       @default_config = block_given? ? Config.build(&blk) : Config.with_obj(config)
-      @default_request = Request.new(@default_config)
+      @default_request = if @default_config.version.split('.')[0].to_i >= 12
+                           V12::Request.new(@default_config)
+                         else
+                           Request.new(@default_config)
+                         end
     end
 
     def env_config
