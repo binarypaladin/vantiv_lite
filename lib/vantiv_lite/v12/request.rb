@@ -129,7 +129,7 @@ module VantivLite
           'id' => request_hash['id'] || SecureRandom.uuid,
           'reportGroup' => config.report_group
         ) do
-          xml.cnpTxnId request_hash['cnpTxnId']
+          xml.cnpTxnId request_hash['txnId']
           xml.orderId request_hash['orderId']
         end
       end
