@@ -93,7 +93,7 @@ module VantivLite
           xml.orderSource hash['orderSource'] || 'ecommerce'
           cardholder_authentication(hash['cardholderAuthentication'], xml)
           token(hash['token'], xml)
-          bill_to_address(hash['billToAddress'], xml) if hash['token'].nil?
+          bill_to_address(hash, xml)
           card(hash['card'], xml)
         end
       end
