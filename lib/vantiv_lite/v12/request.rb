@@ -211,6 +211,7 @@ module VantivLite
           xml.amount request_hash['amount']
           xml.orderSource request_hash['orderSource']
           card(request_hash['card'], xml)
+          bill_to_address(request_hash, xml)
         end
       end
 
