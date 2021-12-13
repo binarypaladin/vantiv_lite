@@ -98,20 +98,20 @@ module VantivLite
       def authorization_request(hash, xml) # rubocop:disable Metrics/AbcSize
         xml.authorization('id' => id(hash), 'reportGroup' => config.report_group) do
           xml.orderId hash['orderId']
-          xml.amount hash['amount']
+          xml.amount hash['amount'] if hash['amount']
           xml.orderSource hash['orderSource'] || 'ecommerce'
           cardholder_authentication(hash['cardholderAuthentication'], xml)
           token(hash['token'], xml)
           bill_to_address(hash, xml)
           card(hash['card'], xml)
-        end.compact
+        end
       end
 
       def auth_reversal_request(hash, xml)
         xml.authReversal('id' => id(hash), 'reportGroup' => config.report_group) do
           xml.cnpTxnId hash['txnId']
-          xml.amount hash['amount']
-        end.compact
+          xml.amount hash['amount'] if hash['amount'].present?
+        end
       end
 
       # rubocop:disable Metrics/MethodLength
@@ -128,7 +128,7 @@ module VantivLite
           xml.state address['state']
           xml.zip address['zip']
           xml.country address['country']
-        end.compact
+        end
       end
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/AbcSize
@@ -139,8 +139,8 @@ module VantivLite
           'reportGroup' => config.report_group
         ) do
           xml.cnpTxnId request_hash['txnId']
-          xml.orderId request_hash['orderId']
-        end.compact
+          xml.orderId request_hash['orderId'] if request_hash['orderId']
+        end
       end
 
       def cardholder_authentication(cardholder_info, xml)
@@ -153,7 +153,7 @@ module VantivLite
           xml.authenticatedByMerchant cardholder_info['authenticatedByMerchant']
           xml.authenticationProtocolVersion cardholder_info['authenticationProtocolVersion']
           xml.tokenAuthenticationValue cardholder_info['tokenAuthenticationValue']
-        end.compact
+        end
       end
 
       def card(card_info, xml)
@@ -164,7 +164,7 @@ module VantivLite
           xml.number card_info['number']
           xml.expDate card_info['expDate']
           xml.cardValidationNum card_info['cardValidationNum']
-        end.compact
+        end
       end
 
       def _http
@@ -194,7 +194,7 @@ module VantivLite
         xml.registerTokenRequest('id' => id(request_hash), 'reportGroup' => config.report_group) do
           xml.accountNumber request_hash['accountNumber']
           xml.cardValidationNum request_hash['cardValidationNum']
-        end.compact
+        end
       end
 
       def id(hash)
@@ -217,11 +217,11 @@ module VantivLite
       def sale_request(request_hash, xml)
         xml.sale('id' => id(request_hash), 'reportGroup' => config.report_group) do
           xml.orderId request_hash['orderId']
-          xml.amount request_hash['amount']
+          xml.amount request_hash['amount'] if request_hash['amount']
           xml.orderSource request_hash['orderSource']
           card(request_hash['card'], xml)
           bill_to_address(request_hash, xml)
-        end.compact
+        end
       end
 
       def token(token_hash, xml)
@@ -231,7 +231,7 @@ module VantivLite
           xml.cnpToken token_hash['cnpToken']
           xml.expDate token_hash['expDate']
           xml.cardValidationNum token_hash['cardValidationNum']
-        end.compact
+        end
       end
     end
   end
