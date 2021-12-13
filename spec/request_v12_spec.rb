@@ -45,6 +45,22 @@ class RequestV12Spec < Minitest::Spec
     r['version'].must_equal('12.20')
   end
 
+  it 'will correctly raise a ServerError' do
+    request = VantivLite::V12::Request.new(v12_config)
+    fake_response = Net::HTTPResponse.new('yes', 404, true)
+    fake_response.body = FIXTURES_PATH.join('authorization_request.xml').read
+    begin
+      VantivLite::Response.new(
+        fake_response,
+        'authorizationResponse',
+        request,
+        parser: request.parser
+      )
+    rescue StandardError => e
+      e.message.must_equal('server responded with 404 instead of 200')
+    end
+  end
+
   it 'can make convenient transactions' do
     xml = VantivLite::V12::Request.new(v12_config).format_xml(
       :authorization_request,

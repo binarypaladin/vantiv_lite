@@ -1,6 +1,7 @@
 # frozen-string-literal: true
 
 require 'vantiv_lite/xml'
+require 'vantiv_lite'
 
 module VantivLite
   class Response

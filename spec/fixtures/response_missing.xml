@@ -1,0 +1,83 @@
+<cnpxx version="12.20"
+    xmlns="http://www.vantivcnp.com/schema" response="0" message="Valid Format">
+    <authorizationResponse id="8d695ba4-e893-439e-8d6c-5dd0c4edfb83" reportGroup="Default Report Group">
+        <cnpTxnId>84075915573413138</cnpTxnId>
+        <orderId>01</orderId>
+        <response>000</response>
+        <responseTime>2021-12-13T18:07:32</responseTime>
+        <postDate>2021-12-13</postDate>
+        <message>Approved</message>
+        <location>florence</location>
+        <authCode>11111 </authCode>
+        <fraudResult>
+            <avsResult>20</avsResult>
+            <cardValidationResult>M</cardValidationResult>
+        </fraudResult>
+        <tokenResponse>
+            <cnpToken>1111000317120009</cnpToken>
+            <tokenResponseCode>802</tokenResponseCode>
+            <tokenMessage>Account number was previously registered</tokenMessage>
+            <type>VI</type>
+            <bin>445701</bin>
+        </tokenResponse>
+        <enhancedAuthResponse>
+            <issuerCountry>USA</issuerCountry>
+            <cardProductType>CONSUMER</cardProductType>
+            <virtualAccountNumber>false</virtualAccountNumber>
+            <networkResponse>
+                <endpoint>VISA</endpoint>
+                <networkField fieldNumber="4" fieldName="Transaction Amount">
+                    <fieldValue>000000010000</fieldValue>
+                </networkField>
+                <networkField fieldNumber="38" fieldName="Authorization Identification Response">
+                    <fieldValue>11111 </fieldValue>
+                </networkField>
+                <networkField fieldNumber="39" fieldName="Response Code">
+                    <fieldValue>00</fieldValue>
+                </networkField>
+                <networkField fieldNumber="44" fieldName="Additional Response Data">
+                    <networkSubField fieldNumber="1">
+                        <fieldValue>V</fieldValue>
+                    </networkSubField>
+                    <networkSubField fieldNumber="2">
+                        <fieldValue>N</fieldValue>
+                    </networkSubField>
+                    <networkSubField fieldNumber="3">
+                        <fieldValue> </fieldValue>
+                    </networkSubField>
+                    <networkSubField fieldNumber="4">
+                        <fieldValue> </fieldValue>
+                    </networkSubField>
+                    <networkSubField fieldNumber="5">
+                        <fieldValue> </fieldValue>
+                    </networkSubField>
+                    <networkSubField fieldNumber="6">
+                        <fieldValue>  </fieldValue>
+                    </networkSubField>
+                    <networkSubField fieldNumber="7">
+                        <fieldValue> </fieldValue>
+                    </networkSubField>
+                    <networkSubField fieldNumber="8">
+                        <fieldValue> </fieldValue>
+                    </networkSubField>
+                    <networkSubField fieldNumber="9">
+                        <fieldValue> </fieldValue>
+                    </networkSubField>
+                    <networkSubField fieldNumber="10">
+                        <fieldValue>M</fieldValue>
+                    </networkSubField>
+                </networkField>
+                <networkField fieldNumber="63" fieldName="Reserved for Private Use">
+                    <networkSubField fieldNumber="1">
+                        <fieldValue>0002</fieldValue>
+                    </networkSubField>
+                    <networkSubField fieldNumber="19">
+                        <fieldValue>FPI</fieldValue>
+                    </networkSubField>
+                </networkField>
+            </networkResponse>
+            <accountRangeId>1001</accountRangeId>
+        </enhancedAuthResponse>
+        <networkTransactionId>468346677267455</networkTransactionId>
+    </authorizationResponse>
+</cnpxx>
