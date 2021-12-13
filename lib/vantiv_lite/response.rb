@@ -4,9 +4,8 @@ require 'vantiv_lite/xml'
 require 'vantiv_lite'
 
 module VantivLite
+  ServerError = Class.new(StandardError)
   class Response
-    ServerError = Class.new(StandardError)
-
     module Refinements
       [Array, Hash].each do |klass|
         next if klass.public_instance_methods.include?(:dig)
