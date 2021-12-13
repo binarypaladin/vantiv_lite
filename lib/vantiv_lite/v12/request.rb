@@ -109,7 +109,7 @@ module VantivLite
 
       def auth_reversal_request(hash, xml)
         xml.authReversal('id' => id(hash), 'reportGroup' => config.report_group) do
-          xml.cnpTxnId hash['authorizationRequestId']
+          xml.cnpTxnId hash['txnId']
           xml.amount hash['amount']
         end
       end
