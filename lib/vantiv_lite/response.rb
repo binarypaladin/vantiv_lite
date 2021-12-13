@@ -75,7 +75,7 @@ module VantivLite
 
       if root_hash['response'] != '0'
         @error = root_hash['message']
-        raise ServerError, @error
+        raise StandardError, @error
       end
 
       dig_keys.any? ? root_hash.dig(*dig_keys) : root_hash

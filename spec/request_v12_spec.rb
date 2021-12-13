@@ -47,9 +47,10 @@ class RequestV12Spec < Minitest::Spec
 
   it 'will correctly raise a ServerError' do
     request = VantivLite::V12::Request.new(v12_config)
-    fake_response = Net::HTTPResponse.new('yes', 404, true)
-    fake_response.body = FIXTURES_PATH.join('authorization_request.xml').read
+    fake_response = Net::HTTPResponse.new('yes', '404', true)
+    fake_response.body = 'test'
     response = nil
+    fake_response.code.must_equal('404')
     begin
       response = VantivLite::Response.new(
         fake_response,
@@ -59,6 +60,45 @@ class RequestV12Spec < Minitest::Spec
       )
     rescue StandardError => e
       e.message.must_equal('server responded with 404 instead of 200')
+    ensure
+      assert_nil(response)
+    end
+  end
+
+  it 'will correctly raise a ServerError' do
+    request = VantivLite::V12::Request.new(v12_config)
+    fake_response = Net::HTTPResponse.new('yes', '200', true)
+    fake_response.body = '<cnp></cnp>'
+    response = nil
+    begin
+      response = VantivLite::Response.new(
+        fake_response,
+        'authorizationResponse',
+        request,
+        parser: request.parser
+      )
+    rescue StandardError => e
+      p e
+    ensure
+      assert_nil(response)
+    end
+  end
+
+  it 'will correctly raise an Error' do
+    request = VantivLite::V12::Request.new(v12_config)
+    fake_response = Net::HTTPResponse.new('yes', '200', true)
+    fake_response.body =
+      '<cnpOnlineResponse response=\"20\" message=\"Error\"></cnpOnlineResponse>'
+    response = nil
+    begin
+      response = VantivLite::Response.new(
+        fake_response,
+        'authorizationResponse',
+        request,
+        parser: request.parser
+      )
+    rescue StandardError => e
+      p e
     ensure
       response.must_equal(nil)
     end
@@ -78,3 +118,4 @@ class RequestV12Spec < Minitest::Spec
     xml.include?('4457010000000009').must_equal(true)
   end
 end
+
