@@ -16,7 +16,7 @@ module VantivLite
       InvalidConfig = Class.new(StandardError)
       ResponseError = Class.new(StandardError)
 
-      attr_reader :config, :http, :serializer
+      attr_reader :config, :http, :serializer, :parser
 
       def initialize(config = VantivLite.default_config, http: nil, serializer: nil)
         raise InvalidConfig, 'invalid or missing config' unless config.is_a?(Config)
@@ -28,7 +28,12 @@ module VantivLite
       end
 
       def call(request_hash, *dig_keys)
-        Response.new(post(serializer.(format_request(request_hash))), *dig_keys, self, parser: @parser)
+        Response.new(
+          post(serializer.(format_request(request_hash))),
+          *dig_keys,
+          self,
+          parser: @parser
+        )
       end
 
       def post(xml)
@@ -43,22 +48,22 @@ module VantivLite
 
       def register_token(request_hash)
         xml = format_xml(:register_token_request, request_hash)
-        Response.new(post(xml), 'registerTokenResponse', parser: @parser)
+        return_response(xml, 'registerTokenResponse')
       end
 
       def auth_reversal(request_hash)
         xml = format_xml(:auth_reversal_request, request_hash)
-        Response.new(post(xml), 'authReversalResponse', parser: @parser)
+        return_response(xml, 'authReversalResponse')
       end
 
       def authorization(request_hash)
         xml = format_xml(:authorization_request, request_hash)
-        Response.new(post(xml), 'authorizationResponse', parser: @parser)
+        return_response(xml, 'authorizationResponse')
       end
 
       def capture(request_hash)
         xml = format_xml(:capture_request, request_hash)
-        Response.new(post(xml), 'captureResponse', parser: @parser)
+        return_response(xml, 'captureResponse')
       end
 
       def format_xml(method_name, request_hash) # rubocop:disable Metrics/MethodLength
@@ -81,7 +86,11 @@ module VantivLite
 
       def sale(request_hash)
         xml = format_xml(:sale_request, request_hash)
-        Response.new(post(xml), 'saleResponse', parser: @parser)
+        return_response(xml, 'saleResponse')
+      end
+
+      def return_response(xml, xml_header)
+        Response.new(post(xml), xml_header, self, parser: @parser)
       end
 
       private
