@@ -95,13 +95,13 @@ module VantivLite
 
       private
 
-      def authorization_request(hash, xml) # rubocop:disable Metrics/AbcSize
+      def authorization_request(hash, xml)
         xml.authorization('id' => id(hash), 'reportGroup' => config.report_group) do
           xml.orderId hash['orderId']
-          xml.amount hash['amount'] if hash['amount']
+          xml.amount hash['amount']
           xml.orderSource hash['orderSource'] || 'ecommerce'
           cardholder_authentication(hash, xml)
-          token(hash['token'], xml)
+          token(hash, xml)
           bill_to_address(hash, xml)
           card(hash['card'], xml)
         end
@@ -145,8 +145,6 @@ module VantivLite
 
       # rubocop disable Metrics/MethodLength
       def cardholder_authentication(hash, xml)
-        return nil if hash['token']
-
         cardholder_info = hash['cardholderAuthentication']
         return nil if cardholder_info.nil?
 
@@ -229,9 +227,10 @@ module VantivLite
         end
       end
 
-      def token(token_hash, xml)
-        return nil if token_hash.nil?
+      def token(hash, xml)
+        return nil if hash['token'].nil? || hash['cardholderAuthentication']
 
+        token_hash = hash['token']
         xml.token do
           xml.cnpToken token_hash['cnpToken']
           xml.expDate token_hash['expDate']
