@@ -150,11 +150,16 @@ module VantivLite
 
         xml.cardholderAuthentication do
           xml.authenticationValue cardholder_info['authenticationValue']
-          xml.authenticationTransactionId cardholder_info['authenticationTransactionId']
-          xml.customerIpAddress cardholder_info['customerIpAddress']
-          xml.authenticatedByMerchant cardholder_info['authenticatedByMerchant']
-          xml.authenticationProtocolVersion cardholder_info['authenticationProtocolVersion']
-          xml.tokenAuthenticationValue cardholder_info['tokenAuthenticationValue']
+          xml.authenticationTransactionId cardholder_info['authenticationTransactionId'] if
+            cardholder_info['authenticationTransactionId'].present?
+          xml.customerIpAddress cardholder_info['customerIpAddress'] if
+            cardholder_info['customerIpAddress'].present?
+          xml.authenticatedByMerchant cardholder_info['authenticatedByMerchant'] if
+            cardholder_info['authenticatedByMerchant'].present?
+          xml.authenticationProtocolVersion cardholder_info['authenticationProtocolVersion'] if
+            cardholder_info['authenticationProtocolVersion'].present?
+          xml.tokenAuthenticationValue cardholder_info['tokenAuthenticationValue'] if
+            cardholder_info['tokenAuthenticationValue'].present?
         end
       end
       # rubocop:enable Metrics/MethodLength
