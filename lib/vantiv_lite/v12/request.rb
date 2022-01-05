@@ -100,7 +100,7 @@ module VantivLite
           xml.orderId hash['orderId']
           xml.amount hash['amount']
           xml.orderSource hash['orderSource'] || 'ecommerce'
-          card(hash['card'], xml)
+          card(hash, xml)
           token(hash, xml)
           cardholder_authentication(hash, xml)
           bill_to_address(hash, xml)
@@ -164,7 +164,10 @@ module VantivLite
       end
       # rubocop:enable Metrics/MethodLength
 
-      def card(card_info, xml)
+      def card(hash, xml)
+        return nil if hash['token']
+
+        card_info = hash['card']
         return nil if card_info.nil?
 
         xml.card do
