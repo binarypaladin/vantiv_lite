@@ -150,8 +150,9 @@ module VantivLite
 
         xml.cardholderAuthentication do
           xml.authenticationValue cardholder_info['authenticationValue']
-          xml.authenticationTransactionId cardholder_info['authenticationTransactionId'] if
-            cardholder_info['authenticationTransactionId'].present?
+          if cardholder_info['authenticationTransactionId'].present? && !visa?(hash)
+            xml.authenticationTransactionId cardholder_info['authenticationTransactionId']
+          end
           xml.customerIpAddress cardholder_info['customerIpAddress'] if
             cardholder_info['customerIpAddress'].present?
           xml.authenticatedByMerchant cardholder_info['authenticatedByMerchant'] if
@@ -163,6 +164,10 @@ module VantivLite
         end
       end
       # rubocop:enable Metrics/MethodLength
+
+      def visa?(hash)
+        hash.dig('card', 'type').to_s.upcase == 'VI'
+      end
 
       def card(hash, xml)
         card_info = hash['card']
