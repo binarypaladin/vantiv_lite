@@ -238,7 +238,7 @@ module VantivLite
 
         token_hash = hash['token']
         xml.token do
-          xml.cnpToken token_hash['cnpToken']
+          xml.cnpToken token_hash['litleToken']
           xml.expDate token_hash['expDate']
           xml.cardValidationNum token_hash['cardValidationNum']
         end
