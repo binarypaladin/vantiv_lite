@@ -152,15 +152,19 @@ module VantivLite
           if cardholder_info['authenticationTransactionId'].present? && !visa?(hash)
             xml.authenticationTransactionId cardholder_info['authenticationTransactionId']
           end
-          xml_element(cardholder_info, 'customerIpAddress', xml)
-          xml_element(cardholder_info, 'authenticatedByMerchant', xml)
-          xml_element(cardholder_info, 'authenticationProtocolVersion', xml)
-          xml_element(cardholder_info, 'tokenAuthenticationValue', xml)
+          remaining_cardholder(cardholder_info, xml)
         end
       end
 
-      def xml_element(hash, field_name, xml)
-        xml[field_name] = hash[field_name] if hash[field_name].present?
+      def remaining_cardholder(cardholder_info, xml)
+        xml.customerIpAddress cardholder_info['customerIpAddress'] if
+          cardholder_info['customerIpAddress'].present?
+        xml.authenticatedByMerchant cardholder_info['authenticatedByMerchant'] if
+          cardholder_info['authenticatedByMerchant'].present?
+        xml.authenticationProtocolVersion cardholder_info['authenticationProtocolVersion'] if
+          cardholder_info['authenticationProtocolVersion'].present?
+        xml.tokenAuthenticationValue cardholder_info['tokenAuthenticationValue'] if
+          cardholder_info['tokenAuthenticationValue'].present?
       end
 
       def visa?(hash)
