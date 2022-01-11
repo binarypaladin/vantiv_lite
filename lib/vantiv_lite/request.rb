@@ -44,6 +44,10 @@ module VantivLite
       end
     end
 
+    def format_xml(request_hash)
+      serializer.(format_request(request_hash))
+    end
+
     private
 
     def _http
