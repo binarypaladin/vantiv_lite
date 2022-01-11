@@ -23,7 +23,6 @@ module VantivLite
 
     def initialize(config = VantivLite.default_config, http: nil, serializer: nil)
       raise InvalidConfig, 'invalid or missing config' unless config.is_a?(Config)
-
       @config = config
       @http = http || _http
       @parser = XML.parser_with(config.xml_lib)
@@ -44,10 +43,6 @@ module VantivLite
       end
     end
 
-    def format_xml(request_hash)
-      serializer.(format_request(request_hash))
-    end
-
     private
 
     def _http
@@ -56,18 +51,10 @@ module VantivLite
       end
     end
 
-    def default_attributes_with(hash, request_hash)
-      hash['id'] ||= '0' if request_hash['orderSource'] != 'recurring'
+    def default_attributes_with(hash)
+      hash['id'] ||= '0'
       hash['reportGroup'] ||= config.report_group
-      hash['litleTxnId'] ||= hash['txnId'] if hash['txnId']
-      remove_fields_when_recurring(hash) if request_hash['orderSource'] == 'recurring'
       hash
-    end
-
-    def remove_fields_when_recurring(hash)
-      %i[id reportGroup cutomerId].each do |key|
-        hash.delete(key)
-      end
     end
 
     def format_request(request_hash)
@@ -83,7 +70,7 @@ module VantivLite
 
     def insert_default_attributes(request_hash)
       request_hash.each_with_object({}) do |(k, obj), h|
-        h[k] = XML.hash_or_array(obj) { |o| default_attributes_with(o, request_hash) }
+        h[k] = XML.hash_or_array(obj) { |o| default_attributes_with(o) }
       end
     end
 
