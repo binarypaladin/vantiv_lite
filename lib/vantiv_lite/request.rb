@@ -57,7 +57,7 @@ module VantivLite
     end
 
     def default_attributes_with(hash, request_hash)
-      hash['id'] ||= '0'
+      hash['id'] ||= '0' if request_hash['orderSource'] != 'recurring'
       hash['reportGroup'] ||= config.report_group
       hash['litleTxnId'] ||= hash['txnId'] if hash['txnId']
       remove_fields_when_recurring(hash) if request_hash['orderSource'] == 'recurring'
