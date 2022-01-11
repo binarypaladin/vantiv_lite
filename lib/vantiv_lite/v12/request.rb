@@ -231,7 +231,7 @@ module VantivLite
           xml.orderId request_hash['orderId']
           xml.amount request_hash['amount'] if request_hash['amount']
           xml.orderSource request_hash['orderSource']
-          card(request_hash['card'], xml)
+          card(request_hash, xml)
           bill_to_address(request_hash, xml)
         end
       end
