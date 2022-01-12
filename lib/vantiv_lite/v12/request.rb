@@ -172,6 +172,8 @@ module VantivLite
       end
 
       def card(hash, xml)
+        return nil if hash['token']
+
         card_info = hash['card']
         return nil if card_info.nil?
 
@@ -241,7 +243,7 @@ module VantivLite
       end
 
       def token(hash, xml)
-        return nil if hash['token'].nil? || hash['card']
+        return nil if hash['token'].nil?
 
         token_hash = hash['token']
         xml.token do
