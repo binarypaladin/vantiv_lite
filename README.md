@@ -110,7 +110,7 @@ This will return a `VantivLite::Response` which itself operates much like a hash
 response.dig('registerTokenResponse', 'litleToken') # => "1111222233330123"
 ```
 
-For many simple transactions the `*_request` and `*_response` keys get a little tedious. So, this can be abreviated to the following:
+For many simple transactions the `*_request` and `*_response` keys get a little tedious. So, this can be abbreviated to the following:
 
 ```ruby
 params = {
