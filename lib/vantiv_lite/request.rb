@@ -23,6 +23,7 @@ module VantivLite
 
     def initialize(config = VantivLite.default_config, http: nil, serializer: nil)
       raise InvalidConfig, 'invalid or missing config' unless config.is_a?(Config)
+
       @config = config
       @http = http || _http
       @parser = XML.parser_with(config.xml_lib)
@@ -30,7 +31,13 @@ module VantivLite
     end
 
     def call(request_hash, *dig_keys)
-      Response.new(post(serializer.(format_request(request_hash))), *dig_keys, self, parser: @parser)
+      Response.new(
+        post(serializer.(format_request(request_hash))),
+        *dig_keys,
+        self,
+        'litleOnlineResponse',
+        parser: @parser
+      )
     end
 
     def post(xml)

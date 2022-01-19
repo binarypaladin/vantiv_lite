@@ -32,6 +32,7 @@ module VantivLite
           post(serializer.(format_request(request_hash))),
           *dig_keys,
           self,
+          'cnpOnlineResponse',
           parser: @parser
         )
       end
@@ -90,7 +91,7 @@ module VantivLite
       end
 
       def return_response(xml, xml_header)
-        Response.new(post(xml), xml_header, self, parser: @parser)
+        Response.new(post(xml), xml_header, self, 'cnpOnlineResponse', parser: @parser)
       end
 
       private

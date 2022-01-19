@@ -56,6 +56,7 @@ class RequestV12Spec < Minitest::Spec
         fake_response,
         'authorizationResponse',
         request,
+        'cnpOnlineResponse',
         parser: request.parser
       )
     rescue StandardError => e
