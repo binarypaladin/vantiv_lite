@@ -2,6 +2,7 @@
 
 require 'vantiv_lite/config'
 require 'vantiv_lite/request'
+require 'vantiv_lite/v12/request'
 
 module VantivLite
   class << self
@@ -9,7 +10,11 @@ module VantivLite
 
     def configure(config = env_config, &blk)
       @default_config = block_given? ? Config.build(&blk) : Config.with_obj(config)
-      @default_request = Request.new(@default_config)
+      @default_request = if @default_config.version.split('.')[0].to_i >= 12
+                           V12::Request.new(@default_config)
+                         else
+                           Request.new(@default_config)
+                         end
     end
 
     def env_config
@@ -27,5 +32,6 @@ module VantivLite
 
     TRANSACTIONS.keys.each { |t| define_method(t) { |hash| default_request.public_send(t, hash) } }
   end
+
   configure
 end

@@ -2,8 +2,8 @@
 
 module VantivLite
   MAJOR = 0
-  MINOR = 1
-  TINY  = 5
+  MINOR = 2
+  TINY  = 6
   VERSION = [MAJOR, MINOR, TINY].join('.').freeze
 
   def self.version

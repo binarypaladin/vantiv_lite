@@ -16,7 +16,7 @@ module VantivLite
     end
 
     def check_keys(config)
-      config_hash.each { |k, v| config.public_send(k).must_equal(v) }
+      config_hash.each { |k, v| _(config.public_send(k)).must_equal(v) }
     end
 
     it 'provides a default sandbox config' do
@@ -34,11 +34,11 @@ module VantivLite
       config = Config.new(config_hash)
       check_keys(config)
 
-      config.uri.must_equal(Config::ENVS[config.env])
-      config.uri.must_be_instance_of(URI::HTTPS)
+      _(config.uri).must_equal(Config::ENVS[config.env])
+      _(config.uri).must_be_instance_of(URI::HTTPS)
 
-      config.proxy_uri.to_s.must_equal(config.proxy_url)
-      config.proxy_uri.must_be_instance_of(URI::HTTP)
+      _(config.proxy_uri.to_s).must_equal(config.proxy_url)
+      _(config.proxy_uri).must_be_instance_of(URI::HTTP)
     end
 
     it 'can be configured programatically' do
@@ -62,21 +62,21 @@ module VantivLite
       config = Config.new(env: 'postlive')
       refute config.sandbox?
       refute config.password
-      config.version.must_equal('8.22')
+      _(config.version).must_equal('8.22')
 
       new_config = config.with(env: 'sandbox', version: '12.0')
       assert new_config.sandbox?
       assert new_config.password
-      new_config.version.must_equal('12.0')
+      _(new_config.version).must_equal('12.0')
 
       %i[report_group xml_lib].each do |k|
-        new_config.public_send(k).must_equal(config.public_send(k))
+        _(new_config.public_send(k)).must_equal(config.public_send(k))
       end
     end
 
     it 'creates a config object from ENV' do
       ENV['vantiv_username'] ||= 'env_user'
-      VantivLite.env_config.username.must_equal(ENV['vantiv_username'])
+      _(VantivLite.env_config.username).must_equal(ENV['vantiv_username'])
     end
   end
 end
