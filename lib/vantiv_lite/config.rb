@@ -10,7 +10,8 @@ module VantivLite
     ENVS = {
       'sandbox' => URI('https://www.testvantivcnp.com/sandbox/communicator/online'),
       'prelive' => URI('https://payments.vantivprelive.com/vap/communicator/online'),
-      'postlive' => URI('https://payments.vantivcnp.com/vap/communicator/online')
+      'postlive' => URI('https://payments.vantivcnp.com/vap/communicator/online'),
+      'postlive_v12' => URI('https://payments.glb.vantivcnp.com/vap/communicator/online')
     }.freeze
 
     OPTS = %i[env merchant_id password proxy_url report_group username version xml_lib].freeze

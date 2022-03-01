@@ -31,7 +31,9 @@ class RequestV12Spec < Minitest::Spec
       'registerTokenRequest' => {
         'orderId' => '1',
         'accountNumber' => '4457010000000009',
-        'cardValidationNum' => '349'
+        'cardValidationNum' => '349',
+        'id' => '123',
+        'customerId' => '123'
       }
     }
   end
@@ -78,6 +80,14 @@ class RequestV12Spec < Minitest::Spec
       register_token_params['registerTokenRequest']
     )
     _(xml.include?('4457010000000009')).must_equal(true)
+
+    VantivLite.register_token(
+      'id' => '123',
+      'orderId' => '123',
+      'customerId' => '123',
+      'accountNumber' => '4457010000000009',
+      'cardValidationNum' => '123'
+    )
   end
 end
 
