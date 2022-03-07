@@ -119,7 +119,7 @@ module VantivLite
       # rubocop:disable Metrics/AbcSize
       def bill_to_address(hash, xml)
         address = hash['billToAddress']
-        return nil if address.nil? || hash['token']
+        return nil if address.nil?
 
         xml.billToAddress do
           xml.name address['name']
