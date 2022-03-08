@@ -101,10 +101,10 @@ module VantivLite
           xml.orderId hash['orderId']
           xml.amount hash['amount']
           xml.orderSource hash['orderSource'] || 'ecommerce'
+          bill_to_address(hash, xml)
           card(hash, xml)
           token(hash, xml)
           cardholder_authentication(hash, xml)
-          bill_to_address(hash, xml)
         end
       end
 
