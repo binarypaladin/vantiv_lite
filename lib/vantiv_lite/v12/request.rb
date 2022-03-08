@@ -141,6 +141,7 @@ module VantivLite
         ) do
           xml.cnpTxnId request_hash['txnId']
           xml.orderId request_hash['orderId'] if request_hash['orderId']
+          bill_to_address(request_hash, xml)
         end
       end
 
@@ -213,6 +214,7 @@ module VantivLite
         xml.registerTokenRequest('id' => id(request_hash), 'reportGroup' => config.report_group) do
           xml.accountNumber request_hash['accountNumber']
           xml.cardValidationNum request_hash['cardValidationNum']
+          bill_to_address(request_hash, xml)
         end
       end
 
