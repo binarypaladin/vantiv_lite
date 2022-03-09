@@ -105,6 +105,7 @@ module VantivLite
           card(hash, xml)
           token(hash, xml)
           cardholder_authentication(hash, xml)
+          custom_billing(hash, xml)
         end
       end
 
@@ -112,6 +113,14 @@ module VantivLite
         xml.authReversal('id' => id(hash), 'reportGroup' => config.report_group) do
           xml.cnpTxnId hash['txnId']
           xml.amount hash['amount'] if hash['amount'].present?
+        end
+      end
+
+      def custom_billing(hash, xml)
+        return if hash['customBilling'].blank?
+
+        xml.customBilling do
+          xml.descriptor hash.dig('customBilling', 'descriptor')
         end
       end
 
@@ -129,6 +138,7 @@ module VantivLite
           xml.state address['state']
           xml.zip address['zip']
           xml.country address['country']
+          xml.email address['email']
         end
       end
       # rubocop:enable Metrics/MethodLength
