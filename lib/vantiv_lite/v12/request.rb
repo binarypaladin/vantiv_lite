@@ -148,7 +148,7 @@ module VantivLite
         xml.capture(
           'id' => request_hash['id'] || SecureRandom.uuid,
           'reportGroup' => config.report_group,
-          'customerId' => hash['customerId']
+          'customerId' => request_hash['customerId']
         ) do
           xml.cnpTxnId request_hash['txnId']
           xml.orderId request_hash['orderId'] if request_hash['orderId']
@@ -225,7 +225,8 @@ module VantivLite
         xml.registerTokenRequest(
           'id' => id(request_hash),
           'reportGroup' => config.report_group,
-          'customerId' => hash['customerId']) do
+          'customerId' => request_hash['customerId']
+        ) do
           xml.accountNumber request_hash['accountNumber']
           xml.cardValidationNum request_hash['cardValidationNum']
           bill_to_address(request_hash, xml)
