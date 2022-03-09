@@ -117,7 +117,7 @@ module VantivLite
       end
 
       def custom_billing(hash, xml)
-        return if hash['customBilling'].blank?
+        return if hash['customBilling'].nil?
 
         xml.customBilling do
           xml.descriptor hash.dig('customBilling', 'descriptor')
