@@ -97,7 +97,7 @@ module VantivLite
       private
 
       def authorization_request(hash, xml)
-        xml.authorization('id' => id(hash), 'reportGroup' => config.report_group) do
+        xml.authorization('id' => id(hash), 'reportGroup' => config.report_group, 'customerId' => hash['customerId']) do
           xml.orderId hash['orderId']
           xml.amount hash['amount']
           xml.orderSource hash['orderSource'] || 'ecommerce'
@@ -110,7 +110,7 @@ module VantivLite
       end
 
       def auth_reversal_request(hash, xml)
-        xml.authReversal('id' => id(hash), 'reportGroup' => config.report_group) do
+        xml.authReversal('id' => id(hash), 'reportGroup' => config.report_group, 'customerId' => hash['customerId']) do
           xml.cnpTxnId hash['txnId']
           xml.amount hash['amount'] if hash['amount'].present?
         end
@@ -147,7 +147,8 @@ module VantivLite
       def capture_request(request_hash, xml)
         xml.capture(
           'id' => request_hash['id'] || SecureRandom.uuid,
-          'reportGroup' => config.report_group
+          'reportGroup' => config.report_group,
+          'customerId' => hash['customerId']
         ) do
           xml.cnpTxnId request_hash['txnId']
           xml.orderId request_hash['orderId'] if request_hash['orderId']
@@ -221,7 +222,10 @@ module VantivLite
       end
 
       def register_token_request(request_hash, xml)
-        xml.registerTokenRequest('id' => id(request_hash), 'reportGroup' => config.report_group) do
+        xml.registerTokenRequest(
+          'id' => id(request_hash),
+          'reportGroup' => config.report_group,
+          'customerId' => hash['customerId']) do
           xml.accountNumber request_hash['accountNumber']
           xml.cardValidationNum request_hash['cardValidationNum']
           bill_to_address(request_hash, xml)
