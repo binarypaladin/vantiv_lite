@@ -144,6 +144,7 @@ class RequestV12Spec < Minitest::Spec
       register_token_params['registerTokenRequest']
     )
     _(xml.include?('4457010000000009')).must_equal(true)
+    _(xml.include?('reportGroup="Prime Trust"')).must_equal(true)
 
     request.format_xml(
       :auth_reversal_request,

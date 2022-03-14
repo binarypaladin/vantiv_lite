@@ -114,7 +114,7 @@ module VantivLite
       end
 
       def report_group(request_hash)
-        request_hash['reportGroup']
+        request_hash['reportGroup'] || config.report_group
       end
 
       def auth_reversal_request(request_hash, xml)
