@@ -34,7 +34,7 @@ module VantivLite
     attr_reader :to_h, :error, :root_key
     alias to_hash to_h
 
-    def initialize(http_response, *dig_keys, request, root_key, parser:)
+    def initialize(http_response, *dig_keys, root_key, parser:)
       @error = nil
       @root_key = root_key
       http_ok?(http_response)

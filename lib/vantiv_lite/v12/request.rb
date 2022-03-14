@@ -4,6 +4,7 @@ require 'securerandom'
 require 'vantiv_lite/response'
 require 'vantiv_lite/xml'
 require 'nokogiri'
+require 'active_support'
 
 module VantivLite
   module V12
@@ -31,7 +32,6 @@ module VantivLite
         Response.new(
           post(serializer.(format_request(request_hash))),
           *dig_keys,
-          self,
           'cnpOnlineResponse',
           parser: @parser
         )
@@ -96,28 +96,40 @@ module VantivLite
 
       private
 
-      def authorization_request(hash, xml)
-        xml.authorization('id' => id(hash), 'reportGroup' => config.report_group, 'customerId' => hash['customerId']) do
-          xml.orderId hash['orderId']
-          xml.amount hash['amount']
-          xml.orderSource hash['orderSource'] || 'ecommerce'
-          bill_to_address(hash, xml)
-          card(hash, xml)
-          token(hash, xml)
-          cardholder_authentication(hash, xml)
-          custom_billing(hash, xml)
+      def authorization_request(request_hash, xml) # rubocop:disable Metrics/MethodLength
+        xml.authorization(
+          'id' => id(request_hash),
+          'reportGroup' => report_group(request_hash),
+          'customerId' => request_hash['customerId']
+        ) do
+          xml.orderId request_hash['orderId']
+          xml.amount request_hash['amount']
+          xml.orderSource request_hash['orderSource'] || 'ecommerce'
+          bill_to_address(request_hash, xml)
+          card(request_hash, xml)
+          token(request_hash, xml)
+          cardholder_authentication(request_hash, xml)
+          custom_billing(request_hash, xml)
         end
       end
 
-      def auth_reversal_request(hash, xml)
-        xml.authReversal('id' => id(hash), 'reportGroup' => config.report_group, 'customerId' => hash['customerId']) do
-          xml.cnpTxnId hash['txnId']
-          xml.amount hash['amount'] if hash['amount'].present?
+      def report_group(request_hash)
+        request_hash['reportGroup']
+      end
+
+      def auth_reversal_request(request_hash, xml)
+        xml.authReversal(
+          'id' => id(request_hash),
+          'reportGroup' => report_group(request_hash),
+          'customerId' => request_hash['customerId']
+        ) do
+          xml.cnpTxnId request_hash['txnId']
+          xml.amount request_hash['amount'] unless request_hash['amount'].nil?
         end
       end
 
-      def custom_billing(hash, xml)
-        return if hash['customBilling'].nil?
+      def custom_billing(request_hash, xml)
+        return if request_hash['customBilling'].nil?
 
         xml.customBilling do
           xml.descriptor hash.dig('customBilling', 'descriptor')
@@ -126,8 +138,8 @@ module VantivLite
 
       # rubocop:disable Metrics/MethodLength
       # rubocop:disable Metrics/AbcSize
-      def bill_to_address(hash, xml)
-        address = hash['billToAddress']
+      def bill_to_address(request_hash, xml)
+        address = request_hash['billToAddress']
         return nil if address.nil?
 
         xml.billToAddress do
@@ -147,7 +159,7 @@ module VantivLite
       def capture_request(request_hash, xml)
         xml.capture(
           'id' => request_hash['id'] || SecureRandom.uuid,
-          'reportGroup' => config.report_group,
+          'reportGroup' => report_group(request_hash),
           'customerId' => request_hash['customerId']
         ) do
           xml.cnpTxnId request_hash['txnId']
@@ -156,13 +168,13 @@ module VantivLite
         end
       end
 
-      def cardholder_authentication(hash, xml) # rubocop disable Metrics/MethodLength
-        cardholder_info = hash['cardholderAuthentication']
+      def cardholder_authentication(request_hash, xml) # rubocop disable Metrics/MethodLength
+        cardholder_info = request_hash['cardholderAuthentication']
         return nil if cardholder_info.nil?
 
         xml.cardholderAuthentication do
           xml.authenticationValue cardholder_info['authenticationValue']
-          if cardholder_info['authenticationTransactionId'].present? && !visa?(hash)
+          if cardholder_info['authenticationTransactionId'].present? && !visa?(request_hash)
             xml.authenticationTransactionId cardholder_info['authenticationTransactionId']
           end
           remaining_cardholder(cardholder_info, xml)
@@ -180,14 +192,14 @@ module VantivLite
           cardholder_info['tokenAuthenticationValue'].present?
       end
 
-      def visa?(hash)
-        hash.dig('card', 'type').to_s.upcase == 'VI'
+      def visa?(request_hash)
+        request_hash.dig('card', 'type').to_s.upcase == 'VI'
       end
 
-      def card(hash, xml)
-        return nil if hash['token']
+      def card(request_hash, xml)
+        return nil if request_hash['token']
 
-        card_info = hash['card']
+        card_info = request_hash['card']
         return nil if card_info.nil?
 
         xml.card do
@@ -204,10 +216,10 @@ module VantivLite
         end
       end
 
-      def default_attributes_with(hash)
-        hash['id'] ||= '0'
-        hash['reportGroup'] ||= config.report_group
-        hash
+      def default_attributes_with(request_hash)
+        request_hash['id'] ||= '0'
+        request_hash['reportGroup'] ||= config.report_group
+        request_hash
       end
 
       def format_request(request_hash)
@@ -224,7 +236,7 @@ module VantivLite
       def register_token_request(request_hash, xml)
         xml.registerTokenRequest(
           'id' => id(request_hash),
-          'reportGroup' => config.report_group,
+          'reportGroup' => report_group(request_hash),
           'customerId' => request_hash['customerId']
         ) do
           xml.accountNumber request_hash['accountNumber']
@@ -233,8 +245,8 @@ module VantivLite
         end
       end
 
-      def id(hash)
-        hash['id'] || hash['authorizationRequestId'] || SecureRandom.uuid
+      def id(request_hash)
+        request_hash['id'] || request_hash['authorizationRequestId'] || SecureRandom.uuid
       end
 
       def insert_default_attributes(request_hash)
@@ -251,7 +263,7 @@ module VantivLite
       end
 
       def sale_request(request_hash, xml)
-        xml.sale('id' => id(request_hash), 'reportGroup' => config.report_group) do
+        xml.sale('id' => id(request_hash), 'reportGroup' => report_group(request_hash)) do
           xml.orderId request_hash['orderId']
           xml.amount request_hash['amount'] if request_hash['amount']
           xml.orderSource request_hash['orderSource']
@@ -260,10 +272,10 @@ module VantivLite
         end
       end
 
-      def token(hash, xml)
-        return nil if hash['token'].nil?
+      def token(request_hash, xml)
+        return nil if request_hash['token'].nil?
 
-        token_hash = hash['token']
+        token_hash = request_hash['token']
         xml.token do
           xml.cnpToken token_hash['litleToken']
           xml.expDate token_hash['expDate']

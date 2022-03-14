@@ -34,7 +34,6 @@ module VantivLite
       Response.new(
         post(serializer.(format_request(request_hash))),
         *dig_keys,
-        self,
         'litleOnlineResponse',
         parser: @parser
       )

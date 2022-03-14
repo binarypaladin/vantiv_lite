@@ -26,6 +26,61 @@ class RequestV12Spec < Minitest::Spec
     }
   end
 
+  let(:cardholder_authorization_params) do
+    {
+      'orderId' => '01',
+      'amount' => '10000',
+      'orderSource' => 'ecommerce',
+      'billToAddress' =>
+      {
+        'name' => 'John Johnson',
+        'addressLine1' => '1 Main St',
+        'city' => 'Las Vegas',
+        'state' => 'NV',
+        'zip' => '89139',
+        'country' => 'US'
+      },
+      'card' => {
+        'type' => 'MC',
+        'number' => '5457010000000009',
+        'expDate' => '0121',
+        'cardValidationNum' => '349'
+      },
+      'cardholderAuthentication' => {
+        'authenticationValue' => 'BwABBJQ1AgAAAAAgJDUCAAAAAAA=',
+        'authenticationProtocolVersion' => '2'
+      }
+
+    }
+  end
+
+  let(:visa_cardholder_authorization_params) do
+    {
+      'orderId' => '01',
+      'amount' => '10000',
+      'orderSource' => 'ecommerce',
+      'billToAddress' =>
+      {
+        'name' => 'John Johnson',
+        'addressLine1' => '1 Main St',
+        'city' => 'Las Vegas',
+        'state' => 'NV',
+        'zip' => '89139',
+        'country' => 'US'
+      },
+      'card' => {
+        'type' => 'VI',
+        'number' => '4457010000000009',
+        'expDate' => '0121',
+        'cardValidationNum' => '349'
+      },
+      'cardholderAuthentication' => {
+        'authenticationValue' => 'BwABBJQ1AgAAAAAgJDUCAAAAAAA=',
+        'authenticationProtocolVersion' => '2'
+      }
+    }
+  end
+
   let(:register_token_params) do
     {
       'registerTokenRequest' => {
@@ -38,8 +93,16 @@ class RequestV12Spec < Minitest::Spec
     }
   end
 
+  let(:auth_reversal_params) do
+    {
+      'id' => SecureRandom.uuid,
+      'txnId' => SecureRandom.uuid,
+      'amount' => '100'
+    }
+  end
+
   let(:v12_config) do
-    VantivLite.default_config.with(version: '12.20', username: 'FUNDA12', password: 'CERT!1212')
+    VantivLite.default_config.with(version: '12.20', username: 'FUNDA12', password: 'CERT!1212', reportGroup: 'Prime Trust')
   end
 
   it 'can use a custom configuration' do
@@ -69,25 +132,33 @@ class RequestV12Spec < Minitest::Spec
   end
 
   it 'can make convenient transactions' do
-    xml = VantivLite::V12::Request.new(v12_config).format_xml(
+    request = VantivLite::V12::Request.new(v12_config)
+    xml = request.format_xml(
       :authorization_request,
       authorization_params['authorization']
     )
     _(xml.include?('01')).must_equal(true)
 
-    xml = VantivLite::V12::Request.new(v12_config).format_xml(
+    xml = request.format_xml(
       :register_token_request,
       register_token_params['registerTokenRequest']
     )
     _(xml.include?('4457010000000009')).must_equal(true)
 
-    VantivLite.register_token(
-      'id' => '123',
-      'orderId' => '123',
-      'customerId' => '123',
-      'accountNumber' => '4457010000000009',
-      'cardValidationNum' => '123'
+    request.format_xml(
+      :auth_reversal_request,
+      auth_reversal_params
+    )
+
+    xml = request.format_xml(
+      :authorization_request,
+      cardholder_authorization_params
+    )
+    _(xml.include?('authenticationProtocolVersion')).must_equal(true)
+
+    request.format_xml(
+      :authorization_request,
+      visa_cardholder_authorization_params
     )
   end
 end
-

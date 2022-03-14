@@ -79,11 +79,11 @@ module VantivLite
 
     def defaults!
       @opts[:env] ||= 'sandbox'
-      @opts[:report_group] ||= 'Default Report Group'
-      @opts[:version] ||= '8.22'
+      @opts[:report_group] ||= 'Prime Trust'
+      @opts[:version] ||= '11.1'
       @opts[:xml_lib] ||= default_xml_lib
       return unless (@sandbox = (opts[:env] == 'sandbox'))
-      @opts[:merchant_id] ||= 'default'
+      @opts[:merchant_id] ||= '01309236'
       @opts[:password] ||= 'sandbox'
       @opts[:username] ||= 'sandbox'
     end
