@@ -78,7 +78,7 @@ module VantivLite
     end
 
     def defaults!
-      @opts[:env] ||= 'sandbox'
+      @opts[:env] ||= 'prelive'
       @opts[:report_group] ||= 'Prime Trust'
       @opts[:version] ||= '11.1'
       @opts[:xml_lib] ||= default_xml_lib
