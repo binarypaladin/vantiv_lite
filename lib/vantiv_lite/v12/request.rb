@@ -104,8 +104,8 @@ module VantivLite
         ) do
           xml.orderId request_hash['orderId']
           xml.amount request_hash['amount']
-          xml.processingType hash['processingType'] if !!hash['processingType']
           xml.orderSource request_hash['orderSource'] || 'ecommerce'
+          xml.processingType hash['processingType'] if !!hash['processingType']
           bill_to_address(request_hash, xml)
           card(request_hash, xml)
           token(request_hash, xml)
