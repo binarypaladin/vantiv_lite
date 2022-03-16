@@ -102,7 +102,12 @@ class RequestV12Spec < Minitest::Spec
   end
 
   let(:v12_config) do
-    VantivLite.default_config.with(version: '12.20', username: 'FUNDA12', password: 'CERT!1212', reportGroup: 'Prime Trust')
+    VantivLite.default_config.with(
+      version: '12.20',
+      username: 'FUNDA12',
+      password: 'CERT!1212',
+      reportGroup: 'Prime Trust'
+    )
   end
 
   it 'can use a custom configuration' do
@@ -161,5 +166,16 @@ class RequestV12Spec < Minitest::Spec
       :authorization_request,
       visa_cardholder_authorization_params
     )
+  end
+
+  it 'populates the response' do
+    response = VantivLite.register_token(
+      'id' => SecureRandom.uuid,
+      'orderId' => nil,
+      'customerId' => SecureRandom.uuid,
+      'accountNumber' => '5222220000000005',
+      'cardValidationNum' => '123'
+    )
+    _(response.to_h.nil?).must_equal(false)
   end
 end
