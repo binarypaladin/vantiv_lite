@@ -132,7 +132,7 @@ module VantivLite
         return if request_hash['customBilling'].nil?
 
         xml.customBilling do
-          xml.descriptor hash.dig('customBilling', 'descriptor')
+          xml.descriptor request_hash.dig('customBilling', 'descriptor')
         end
       end
 
