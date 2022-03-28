@@ -34,7 +34,6 @@ module VantivLite
       Response.new(
         post(serializer.(format_request(request_hash))),
         *dig_keys,
-        self,
         'litleOnlineResponse',
         parser: @parser
       )
@@ -60,7 +59,6 @@ module VantivLite
 
     def default_attributes_with(hash)
       hash['id'] ||= '0'
-      hash['id'] = hash['id'][0..24]
       hash['reportGroup'] ||= config.report_group
       hash
     end

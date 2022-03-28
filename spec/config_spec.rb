@@ -62,7 +62,7 @@ module VantivLite
       config = Config.new(env: 'postlive')
       refute config.sandbox?
       refute config.password
-      _(config.version).must_equal('8.22')
+      _(config.version).must_equal('11.1')
 
       new_config = config.with(env: 'sandbox', version: '12.0')
       assert new_config.sandbox?

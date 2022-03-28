@@ -10,7 +10,8 @@ module VantivLite
     ENVS = {
       'sandbox' => URI('https://www.testvantivcnp.com/sandbox/communicator/online'),
       'prelive' => URI('https://payments.vantivprelive.com/vap/communicator/online'),
-      'postlive' => URI('https://payments.vantivcnp.com/vap/communicator/online')
+      'postlive' => URI('https://payments.vantivcnp.com/vap/communicator/online'),
+      'postlive_v12' => URI('https://payments.glb.vantivcnp.com/vap/communicator/online')
     }.freeze
 
     OPTS = %i[env merchant_id password proxy_url report_group username version xml_lib].freeze
@@ -77,12 +78,12 @@ module VantivLite
     end
 
     def defaults!
-      @opts[:env] ||= 'sandbox'
-      @opts[:report_group] ||= 'Default Report Group'
-      @opts[:version] ||= '8.22'
+      @opts[:env] ||= 'prelive'
+      @opts[:report_group] ||= 'Prime Trust'
+      @opts[:version] ||= '11.1'
       @opts[:xml_lib] ||= default_xml_lib
       return unless (@sandbox = (opts[:env] == 'sandbox'))
-      @opts[:merchant_id] ||= 'default'
+      @opts[:merchant_id] ||= '01309236'
       @opts[:password] ||= 'sandbox'
       @opts[:username] ||= 'sandbox'
     end
