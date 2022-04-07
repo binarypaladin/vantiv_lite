@@ -106,11 +106,11 @@ module VantivLite
           xml.amount request_hash['amount']
           xml.orderSource request_hash['orderSource'] || 'ecommerce'
           bill_to_address(request_hash, xml)
-          xml.processingType hash['processingType'] if !!hash['processingType']
           card(request_hash, xml)
           token(request_hash, xml)
           cardholder_authentication(request_hash, xml)
           custom_billing(request_hash, xml)
+          xml.processingType hash['processingType'] if !!hash['processingType']
         end
       end
 
