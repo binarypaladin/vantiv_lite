@@ -110,6 +110,7 @@ module VantivLite
           token(request_hash, xml)
           cardholder_authentication(request_hash, xml)
           custom_billing(request_hash, xml)
+          xml.processingType request_hash['processingType'] if !!request_hash['processingType']
         end
       end
 
