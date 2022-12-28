@@ -60,6 +60,7 @@ module VantivLite
     def default_attributes_with(hash)
       hash['id'] ||= '0'
       hash['reportGroup'] ||= config.report_group
+      hash['crypto'] = true
       hash
     end
 
