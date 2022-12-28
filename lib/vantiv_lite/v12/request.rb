@@ -220,6 +220,7 @@ module VantivLite
       def default_attributes_with(request_hash)
         request_hash['id'] ||= '0'
         request_hash['reportGroup'] ||= config.report_group
+        request_hash['crypto'] = true
         request_hash
       end
 
